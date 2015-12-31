@@ -1,0 +1,51 @@
+{%extends "base.html"%}
+
+{% block content %}
+<form method="POST">
+{{ form.hidden_tag()}}
+<div class="input-group">
+    <!-- <input type="text" class="form-control" placeholder="添加todo..."> -->
+    {{form.todo(class='form-control',placeholder='添加todo...')}}
+    <span class="input-group-btn">
+        <!-- <button class="btn btn-default" type="button">添加任务</button> -->
+        {{ form.submit(class='btn btn-default')}}
+    </span>
+</div>
+</form>
+{% if todolists %}
+<h2>Todo list</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>任务</th>
+            <th>状态</th>
+            <th>时间</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for todo in todolists %}
+        <tr>
+            <th>{{todo.content}}</th>
+            <th>
+                {% if todo.status %}已完成
+                {% else %} 未完成
+                {% endif %}
+            </th>
+            <th>{{todo.timestamp.strftime('%H:%M %Y-%m-%d')}}</th>
+            <th>
+            {% if not todo.status %}
+                <a class="btn btn-primary btn-sm" href="{{url_for('.done',id=todo.id)}}">完成</a>
+            {% else %}
+                <a class="btn btn-default btn-sm" href="{{url_for('.done',id=todo.id)}}">未完成</a>
+            {% endif %}
+                <a class="btn btn-danger btn-sm" href="{{url_for('.delete',id=todo.id)}}">删除</a>
+            </th>
+        </tr>
+    {% endfor %}
+    {% else %}
+        <h3>你还没有待完成任务，请添加....</h3>
+    {% endif %}
+    </tbody>
+</table>
+{% endblock %}
