@@ -1,6 +1,7 @@
 from flask import render_template,redirect,url_for
-from . import app,db
-from .models import Todo,TodoForm
+from . import app
+from ..models import Todo,TodoForm
+from .. import db 
 
 @app.route('/',methods=['POST','GET'])
 def index():
@@ -9,7 +10,7 @@ def index():
         todo = Todo(content = form.todo.data)
         db.session.add(todo)
         return redirect(url_for('.index'))
-    todolists = Todo.query.all()
+    todolists = Todo.query.order_by(Todo.timestamp.desc()).all()
     return render_template('index.html',todolists=todolists,form=form)
 
 @app.route('/delete/<int:id>')
@@ -28,7 +29,7 @@ def done(id):
     db.session.add(todo)
     return redirect(url_for('.index'))
 
-@app.errorhandler(404)
+@app.app_errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'),404
     
